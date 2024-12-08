@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.devsuperior.dscatalog.dto.InsertUserDTO;
 import com.devsuperior.dscatalog.dto.UserDTO;
 import com.devsuperior.dscatalog.services.UserService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -38,7 +41,7 @@ public class UserResource {
     }
 
     @PostMapping()
-    public UserDTO insertUser(@RequestBody InsertUserDTO entity) {
+    public UserDTO insertUser(@Valid @RequestBody InsertUserDTO entity) {
         return userService.insert(entity);
     }
 
