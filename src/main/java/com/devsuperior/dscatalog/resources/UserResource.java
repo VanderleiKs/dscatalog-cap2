@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.devsuperior.dscatalog.dto.InsertUserDTO;
+import com.devsuperior.dscatalog.dto.UserInsertDTO;
+import com.devsuperior.dscatalog.dto.UserUpdateDTO;
 import com.devsuperior.dscatalog.dto.UserDTO;
 import com.devsuperior.dscatalog.services.UserService;
 
@@ -41,12 +42,12 @@ public class UserResource {
     }
 
     @PostMapping()
-    public UserDTO insertUser(@Valid @RequestBody InsertUserDTO entity) {
+    public UserDTO insertUser(@Valid @RequestBody UserInsertDTO entity) {
         return userService.insert(entity);
     }
 
     @PutMapping("/{id}")
-    public UserDTO insertUser(@PathVariable Long id, @RequestBody UserDTO entity) {
+    public UserDTO updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO entity) {
         return userService.update(id, entity);
     }
 

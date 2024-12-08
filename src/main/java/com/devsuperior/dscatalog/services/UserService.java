@@ -1,7 +1,5 @@
 package com.devsuperior.dscatalog.services;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +11,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.devsuperior.dscatalog.dto.InsertUserDTO;
+import com.devsuperior.dscatalog.dto.UserInsertDTO;
 import com.devsuperior.dscatalog.dto.UserDTO;
-import com.devsuperior.dscatalog.entities.Role;
 import com.devsuperior.dscatalog.entities.User;
 import com.devsuperior.dscatalog.repositories.RoleRepository;
 import com.devsuperior.dscatalog.repositories.UserRepository;
@@ -47,14 +44,14 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO insert(InsertUserDTO userDTO) {
+    public UserDTO insert(UserInsertDTO userDTO) {
         final User user = new User(null,
-                userDTO.firstName(),
-                userDTO.lastName(),
-                userDTO.email(),
-                passwordEncoder.encode(userDTO.password()));
+                userDTO.getFirstName(),
+                userDTO.getLastName(),
+                userDTO.getEmail(),
+                passwordEncoder.encode(userDTO.getPassword()));
 
-        userDTO.roles().forEach(r -> user.getRoles().add(
+        userDTO.getRoles().forEach(r -> user.getRoles().add(
                 roleRepository.getReferenceById(r.id())));
 
         var newUser = userRepository.save(user);
@@ -67,13 +64,13 @@ public class UserService {
 
         var user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
 
-        user.setFirstName(dto.firstName()); 
-        user.setLastName(dto.lastName());
-        user.setEmail(dto.email());
+        user.setFirstName(dto.getFirstName()); 
+        user.setLastName(dto.getLastName());
+        user.setEmail(dto.getEmail());
 
         user.getRoles().clear();
 
-        dto.roles().forEach(r -> user.getRoles().add(
+        dto.getRoles().forEach(r -> user.getRoles().add(
                 roleRepository.getReferenceById(r.id())));
 
         var newUser = userRepository.save(user);
