@@ -1,53 +1,66 @@
 package com.devsuperior.dscatalog.repositories;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.Optional;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import com.devsuperior.dscatalog.Factory;
 import com.devsuperior.dscatalog.entities.Product;
-import com.devsuperior.dscatalog.tests.Factory;
 
 @DataJpaTest
 public class ProductRepositoryTests {
 
-	@Autowired
-	private ProductRepository repository;
-	
-	private long existingId;
-	private long countTotalProducts;
-	
-	@BeforeEach
-	void setUp() throws Exception {
-		existingId = 1L;
-		countTotalProducts = 25L;
-	}
-	
-	@Test
-	public void saveShouldPersistWithAutoincrementWhenIdIsNull() {
+    private Integer countIdProduct;
+    private Long existId;
+    private Long nonExistId;
 
-		Product product = Factory.createProduct();
-		product.setId(null);
-		
-		product = repository.save(product);
-		Optional<Product> result = repository.findById(product.getId());
-		
-		Assertions.assertNotNull(product.getId());
-		Assertions.assertEquals(countTotalProducts + 1L, product.getId());
-		Assertions.assertTrue(result.isPresent());
-		Assertions.assertSame(result.get(), product);
-	}
-	
-	@Test
-	public void deleteShouldDeleteObjectWhenIdExists() {
-		
-		repository.deleteById(existingId);
+    @Autowired
+    private ProductRepository productRepository;
+    
+    @BeforeEach
+    void setup() {
+        countIdProduct = 25;
+        existId = 1L;
+        nonExistId = 0L;
+    }
 
-		Optional<Product> result = repository.findById(existingId);
-		
-		Assertions.assertFalse(result.isPresent());
-	}
+    @Test
+    public void deleteShouldDeleteObjectWhenIdExists() {
+        productRepository.deleteById(existId);
+
+        Optional<Product> result = productRepository.findById(existId);
+
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    public void saveShouldAddNewProductWhenIdIsNull() {
+       var newProduct =  Factory.newProduct();
+       var productSave = productRepository.save(newProduct);
+
+       assertNotNull(productSave);
+       assertNotNull(productSave.getId());
+       assertEquals(countIdProduct+1, productSave.getId());
+    }
+
+    @Test
+    public void findByIdShouldReturnNonEmptyOptionalWhenIdExist() {
+        Optional<Product> product = productRepository.findById(existId);
+
+        assertNotEquals(Optional.empty(), product);
+        assertTrue(product.isPresent());
+    }
+
+    @Test
+    public void findByIdShouldReturnEmptyOptionalWhenIdDoesNotExist() {
+        Optional<Product> product = productRepository.findById(nonExistId);
+
+        assertEquals(Optional.empty(), product);
+    }
+
 }
